@@ -43,7 +43,7 @@ function Place(data, map) {
     this.name = ko.observable(data.name);
     this.visible = ko.observable(data.visible);
     this.map = ko.observable(map);
-    this.marker = null;
+    this.marker = ko.observable(null);
     this.indexName = ko.computed(function () {
         return self.name().replace(' ', '').toLowerCase();
     });
@@ -86,28 +86,38 @@ function AppViewModel(map) {
     });
 
     // read data and create observable array
-    for (var i = 0; i < data.length; i++) {
-        var place = new Place(data[i], self.map());
-        self.places.push(place);
-    }
-
-    // init map
-    for (var i = 0; i < this.places().length; i++) {
-        var place = this.places()[i];
-        if (place.visible()) {
-            var marker = new google.maps.Marker({
-                position: place.position(),
-                animation: google.maps.Animation.DROP,
-                map: this.map(),
-                title: place.name()
-            });
-            place.setMarker(marker);
+    this.indexData = function () {
+        for (var i = 0; i < data.length; i++) {
+            var place = new Place(data[i], self.map());
+            self.places.push(place);
         }
-    }
+    };
 
+    // set markers on the map
+    this.setMarkers = function () {
+        for (var i = 0; i < self.places().length; i++) {
+            var place = self.places()[i];
+            if (place.marker()) {
+                if (!place.visible()) {
+                    place.marker().setVisible(false);
+                } else {
+                    place.marker().setVisible(true);
+                }
+            } else {
+                var marker = new google.maps.Marker({
+                    position: place.position(),
+                    animation: google.maps.Animation.DROP,
+                    map: self.map(),
+                    title: place.name()
+                });
+                place.setMarker(marker);
+            }
+        }
+    };
+
+    // read text from search input and filter the matches
     this.searchPlace = function (place, event) {
         if (event.key === 'Enter') {
-            console.log(self.searchContent());
             self.places().forEach(function (place) {
                 if (place.indexName().includes(self.indexSearchContent())) {
                     place.visible(true);
@@ -115,9 +125,14 @@ function AppViewModel(map) {
                     place.visible(false);
                 }
             });
+            self.setMarkers();
         }
         return true; // allow proceed other bindings
-    }
+    };
+
+    this.indexData();
+    this.setMarkers();
+
 }
 
 // entry point, callback function after get allow from Google Map API

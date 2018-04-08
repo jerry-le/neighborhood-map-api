@@ -65,13 +65,23 @@ function Place(data, map) {
     };
 
     this.popUpInfoWindow = function () {
-        var content = "<h3 style='color: black;'>Say hi!</h3>";
-        if (self.infoWindow().getMap()) {
-            self.infoWindow().close();
-        } else {
-            self.infoWindow().setContent(content);
-            self.infoWindow().open(self.map(), self.marker());
-        }
+        var restaurants = ApiUtils.getPlace(self.position(), self.map(), 'restaurant')
+            .then(function (data) {
+                var content = "<h4 style='color: black;'>List restaurants:</h4>";
+                if (!data) {
+                    self.infoWindow().setContent(content);
+                    self.infoWindow().open(self.map(), self.marker());
+                }
+                if (self.infoWindow().getMap()) {
+                    self.infoWindow().close();
+                } else {
+                    for (var i = 0; i < data.length; i++) {
+                        content += "<p style='color: black'>" + data[i].name + " - " + data[i].vicinity + "</p>";
+                    }
+                    self.infoWindow().setContent(content);
+                    self.infoWindow().open(self.map(), self.marker());
+                }
+            });
     }
 }
 
@@ -97,13 +107,7 @@ function AppViewModel(map) {
     this.setMarkers = function () {
         for (var i = 0; i < self.places().length; i++) {
             var place = self.places()[i];
-            if (place.marker()) {
-                if (!place.visible()) {
-                    place.marker().setVisible(false);
-                } else {
-                    place.marker().setVisible(true);
-                }
-            } else {
+            if (!place.marker()) { // if marker is not existing, create it
                 var marker = new google.maps.Marker({
                     position: place.position(),
                     animation: google.maps.Animation.DROP,
@@ -112,6 +116,7 @@ function AppViewModel(map) {
                 });
                 place.setMarker(marker);
             }
+            place.marker().setVisible(place.visible());
         }
     };
 
@@ -119,11 +124,8 @@ function AppViewModel(map) {
     this.searchPlace = function (place, event) {
         if (event.key === 'Enter') {
             self.places().forEach(function (place) {
-                if (place.indexName().includes(self.indexSearchContent())) {
-                    place.visible(true);
-                } else {
-                    place.visible(false);
-                }
+                var isVisible = place.indexName().includes(self.indexSearchContent());
+                place.visible(isVisible);
             });
             self.setMarkers();
         }
@@ -143,3 +145,13 @@ function initMap() {
     });
     ko.applyBindings(new AppViewModel(map));
 }
+
+// error handling
+var url = "https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuv_Seo6WGwB_DnaOs8qoFRcixq7Ot7c&v=3&callback=initMap&libraries=places";
+$.getScript(url)
+    .done(function () {
+        console.log("Authorize success!")
+    })
+    .fail(function () {
+        alert("Cannot get Map!")
+    });

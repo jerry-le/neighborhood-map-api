@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/custom.css">
+</head>
+<body>
+
+    <div id="menu">
+        <div class="menu-title">Vietnam's famous places</div>
+        <div class="form-search">
+            <input class="form-control input-search"
+                   data-bind="value: searchContent, valueUpdate: 'afterkeydown', event{keypress: searchPlace}"
+                   type="search" placeholder="filter city name">
+        </div>
+        <div class="list-place-bar" data-bind="foreach: places">
+            <div data-bind="if: visible">
+                <div class="list-place" data-bind="text: name, click: animate"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="content">
+        <div></div>
+        <div>
+            <span class="hamburger-icon">
+                <a id="hamburger-button" href="javascript:void(0)">&#9776;</a>
+            </span>
+            <span>Vietnam Neighborhood</span>
+        </div>
+        <div id="map"></div>
+    </div>
+
+    <!-- KnouckoutJs-->
+    <script src="js/knockout-3.2.0.js"></script>
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <!-- Bootstrap Js CDN -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script src="js/map.js"></script>
+    <script src="js/ui.js"></script>
+
+    <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBZuv_Seo6WGwB_DnaOs8qoFRcixq7Ot7c&v=3&callback=initMap">
+    </script>
+
+</body>
+</html>

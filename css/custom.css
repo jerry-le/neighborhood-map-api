@@ -1,0 +1,61 @@
+html, body {
+    height: 100%;
+    width: 100%;
+}
+
+#map {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+}
+
+#menu {
+    position: absolute;
+    padding: 10px;
+    width: 250px;
+    height: 100%;
+    background: black;
+    z-index: 1;
+    color: white;
+}
+
+.hamburger-icon,
+.menu-title {
+    font-size: 20px;
+    height: 40px;
+    line-height: 50px;
+}
+
+#content {
+    position: absolute;
+    top: 0;
+    left: 250px;
+    width: 100%;
+    height: 100%;
+    background: black;
+    color: white;
+}
+
+.input-search {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-search {
+    border-bottom: 0.5px solid rgba(255, 255, 255, .5);
+    border-top: 0.5px solid rgba(255, 255, 255, .5);
+}
+
+.list-place {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    user-select: none;
+}
+
+.list-place:hover {
+    background: gray;
+    color: black;
+    border-radius: .25rem;
+}
+
